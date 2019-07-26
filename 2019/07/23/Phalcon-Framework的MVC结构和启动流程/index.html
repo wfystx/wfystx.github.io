@@ -1,0 +1,1148 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.1.1">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/motor.png?v=7.1.1">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/motor.png?v=7.1.1">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/motor.png?v=7.1.1">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.1.1" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.1.1',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false,"dimmer":false},
+    back2top: true,
+    back2top_sidebar: false,
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="日志未经声明，均为AlloVince原创。版权采用『 知识共享署名-非商业性使用 2.5 许可协议』进行许可。 创建项目Phalcon环境配置安装后，可以通过命令行生成一个标准的Phalcon多模块应用 1phalcon project eva --type modules 入口文件为public/index.php，简化后一共5行，包含了整个Phalcon的启动流程，以下将按顺序说明 12345">
+<meta name="keywords" content="Phalcon,PHP">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Phalcon Framework的MVC结构和启动流程">
+<meta property="og:url" content="http://yoursite.com/2019/07/23/Phalcon-Framework的MVC结构和启动流程/index.html">
+<meta property="og:site_name" content="Fuyao&#39;s Blog">
+<meta property="og:description" content="日志未经声明，均为AlloVince原创。版权采用『 知识共享署名-非商业性使用 2.5 许可协议』进行许可。 创建项目Phalcon环境配置安装后，可以通过命令行生成一个标准的Phalcon多模块应用 1phalcon project eva --type modules 入口文件为public/index.php，简化后一共5行，包含了整个Phalcon的启动流程，以下将按顺序说明 12345">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2019-07-23T08:19:27.153Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Phalcon Framework的MVC结构和启动流程">
+<meta name="twitter:description" content="日志未经声明，均为AlloVince原创。版权采用『 知识共享署名-非商业性使用 2.5 许可协议』进行许可。 创建项目Phalcon环境配置安装后，可以通过命令行生成一个标准的Phalcon多模块应用 1phalcon project eva --type modules 入口文件为public/index.php，简化后一共5行，包含了整个Phalcon的启动流程，以下将按顺序说明 12345">
+
+
+
+
+
+  
+  
+  <link rel="canonical" href="http://yoursite.com/2019/07/23/Phalcon-Framework的MVC结构和启动流程/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>Phalcon Framework的MVC结构和启动流程 | Fuyao's Blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Fuyao's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">No amount of money can bring back those moments you treasure.</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Toggle navigation bar">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>Home</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>About</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>Tags</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>Categories</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>Archives</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/07/23/Phalcon-Framework的MVC结构和启动流程/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Fuyao Wang">
+      <meta itemprop="description" content="Welcome to my Blog">
+      <meta itemprop="image" content="/uploads/myavatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Fuyao's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Phalcon Framework的MVC结构和启动流程
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+
+              
+                
+              
+
+              <time title="Created: 2019-07-23 16:17:17 / Modified: 16:19:27" itemprop="dateCreated datePublished" datetime="2019-07-23T16:17:17+08:00">2019-07-23</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+
+          
+            
+            
+              
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+            
+                <span class="post-meta-item-text">Comments: </span>
+                <a href="/2019/07/23/Phalcon-Framework的MVC结构和启动流程/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/07/23/Phalcon-Framework的MVC结构和启动流程/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>日志未经声明，均为<a href="https://plus.google.com/104171418568283484752?rel=author" target="_blank" rel="noopener">AlloVince</a>原创。版权采用<a href="http://creativecommons.org/licenses/by-nc/2.5/cn/" target="_blank" rel="noopener">『 知识共享署名-非商业性使用 2.5 许可协议』</a>进行许可。</p>
+<h2 id="创建项目"><a href="#创建项目" class="headerlink" title="创建项目"></a>创建项目</h2><p>Phalcon环境配置安装后，可以通过命令行生成一个标准的Phalcon多模块应用</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">phalcon project eva --type modules</span><br></pre></td></tr></table></figure>
+<p>入口文件为<code>public/index.php</code>，简化后一共5行，包含了整个Phalcon的启动流程，以下将按顺序说明</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">require __DIR__ . &apos;/../config/services.php&apos;;</span><br><span class="line">$application = new Phalcon\Mvc\Application();</span><br><span class="line">$application-&gt;setDI($di);</span><br><span class="line">require __DIR__ . &apos;/../config/modules.php&apos;;</span><br><span class="line">echo $application-&gt;handle()-&gt;getContent();</span><br></pre></td></tr></table></figure>
+<h2 id="DI注册阶段"><a href="#DI注册阶段" class="headerlink" title="DI注册阶段"></a>DI注册阶段</h2><p>Phalcon的所有组件服务都是通过<a href="http://docs.phalconphp.com/en/latest/api/Phalcon_DI.html" target="_blank" rel="noopener">DI（依赖注入）</a>进行组织的，这也是目前大部分主流框架所使用的方法。通过DI，可以灵活的控制框架中的服务：哪些需要启用，哪些不启用，组件的内部细节等等，因此Phalcon是一个松耦合可替换的框架，完全可以通过DI替换MVC中任何一个组件。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">require __DIR__ . &apos;/../config/services.php&apos;;</span><br></pre></td></tr></table></figure>
+<p>这个文件中默认注册了<code>Phalcon\Mvc\Router</code>（路由）、<code>Phalcon\Mvc\Url</code>（Url）、<code>Phalcon\Session\Adapter\Files</code>（Session）三个最基本的组件。同时当MVC启动后，DI中默认注册的服务还有很多，可以通过DI得到所有当前已经注册的服务：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$services = $application-&gt;getDI()-&gt;getServices();</span><br><span class="line">foreach($services as $key =&gt; $service) &#123;</span><br><span class="line">        var_dump($key);</span><br><span class="line">        var_dump(get_class($application-&gt;getDI()-&gt;get($key)));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>打印看到Phalcon还注册了以下服务：</p>
+<ul>
+<li><code>dispatcher</code> : <code>Phalcon\Mvc\Dispatcher</code> 分发服务，将路由命中的结果分发到对应的Controller</li>
+<li><code>modelsManager</code> : <code>Phalcon\Mvc\Model\Manager</code> Model管理</li>
+<li><code>modelsMetadata</code> : <code>Phalcon\Mvc\Model\MetaData\Memory</code> ORM表结构</li>
+<li><code>response</code> : <code>Phalcon\Http\Response</code> 响应</li>
+<li><code>cookies</code> : <code>Phalcon\Http\Response\Cookies</code> Cookies</li>
+<li><code>request</code> : <code>Phalcon\Http\Request</code> 请求</li>
+<li><code>filter</code> : <code>Phalcon\Filter</code> 可对用户提交数据进行过滤</li>
+<li><code>escaper</code> : <code>Phalcon\Escaper</code> 转义工具</li>
+<li><code>security</code> : <code>Phalcon\Security</code> 密码Hash、防止CSRF等</li>
+<li><code>crypt</code> : <code>Phalcon\Crypt</code> 加密算法</li>
+<li><code>annotations</code> : <code>Phalcon\Annotations\Adapter\Memory</code> 注解分析</li>
+<li><code>flash</code> : <code>Phalcon\Flash\Direct</code> 提示信息输出</li>
+<li><code>flashSession</code> : <code>Phalcon\Flash\Session</code> 提示信息通过Session延迟输出</li>
+<li><code>tag</code> : <code>Phalcon\Tag</code> View的常用Helper</li>
+</ul>
+<p>而每一个服务都可以通过DI进行替换。接下来实例化一个标准的MVC应用，然后将我们定义好的DI注入进去</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$application = new Phalcon\Mvc\Application();</span><br><span class="line">$application-&gt;setDI($di);</span><br></pre></td></tr></table></figure>
+<h2 id="模块注册阶段"><a href="#模块注册阶段" class="headerlink" title="模块注册阶段"></a>模块注册阶段</h2><p>与DI一样，Phalcon建议通过引入一个独立文件的方式注册所有需要的模块：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">require __DIR__ . &apos;/../config/modules.php&apos;;</span><br></pre></td></tr></table></figure>
+<p>这个文件的内容如下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$application-&gt;registerModules(array(</span><br><span class="line">    &apos;frontend&apos; =&gt; array(</span><br><span class="line">        &apos;className&apos; =&gt; &apos;Eva\Frontend\Module&apos;,</span><br><span class="line">        &apos;path&apos; =&gt; __DIR__ . &apos;/../apps/frontend/Module.php&apos;</span><br><span class="line">    )</span><br><span class="line">));</span><br></pre></td></tr></table></figure>
+<p>可以看到Phalcon所谓的模块注册，其实只是告诉框架MVC模块的引导文件<code>Module.php</code>所在位置及类名是什么。</p>
+<h2 id="MVC阶段"><a href="#MVC阶段" class="headerlink" title="MVC阶段"></a>MVC阶段</h2><p><code>$application-&gt;handle()</code>是整个MVC的核心，这个函数中处理了路由、模块、分发等MVC的全部流程，处理过程中在关键位置会通过事件驱动触发一系列<code>application:</code>事件，方便外部注入逻辑，最终返回一个<code>Phalcon\Http\Response</code>。整个<a href="https://github.com/phalcon/cphalcon/blob/1.3.2/ext/mvc/application.c#L303" target="_blank" rel="noopener"><code>handle</code>方法的过程</a>并不复杂，下面按顺序介绍：</p>
+<h3 id="基础检查"><a href="#基础检查" class="headerlink" title="基础检查"></a>基础检查</h3><p>首先检查DI，如果没有任何DI注入，会抛出错误</p>
+<blockquote>
+<p>A dependency injection object is required to access internal services</p>
+</blockquote>
+<p>然后从DI启动EventsManager，并且通过EventsManager触发事件<code>application:boot</code></p>
+<h3 id="路由阶段"><a href="#路由阶段" class="headerlink" title="路由阶段"></a>路由阶段</h3><p>接下来进入路由阶段，从DI中获得路由服务<code>router</code>，将uri传入路由并调用路由的<a href="http://docs.phalconphp.com/en/latest/api/Phalcon_Mvc_Router.html" target="_blank" rel="noopener"><code>handle()</code>方法</a>。</p>
+<p>路由的handle方法负责将一个uri根据路由配置，转换为相应的Module、Controller、Action等，这一阶段接下来会检查路由是否命中了某个模块，并通过<code>Router-&gt;getModuleName()</code>获得模块名。</p>
+<p>如果模块存在，则进入模块启动阶段，否则直接进入分发阶段。</p>
+<p>注意到了么，在Phalcon中，<strong>模块启动是后于路由的</strong>，这意味着Phalcon的模块功能比较弱，我们无法在某个未启动的模块中注册全局服务，甚至无法简单的在当前模块中调用另一个未启动模块。这可能是Phalcon模块功能设计中最大的问题，解决方法暂时不在本文的讨论范围内，以后会另开文章介绍。</p>
+<h4 id="模块启动"><a href="#模块启动" class="headerlink" title="模块启动"></a>模块启动</h4><p>模块启动时首先会触发<code>application:beforeStartModule</code>事件。事件触发后检查模块的正确性，根据<code>modules.php</code>中定义的<code>className</code>、<code>path</code>等，将模块引导文件加载进来，并调用模块引导文件中必须存在的方法</p>
+<ul>
+<li><code>Phalcon\Mvc\ModuleDefinitionInterface-&gt;registerAutoloaders ()</code></li>
+<li><code>Phalcon\Mvc\ModuleDefinitionInterface-&gt;registerServices (Phalcon\DiInterface $dependencyInjector)</code></li>
+</ul>
+<p><code>registerAutoloaders()</code>用于注册模块内的命名空间实现自动加载。<code>registerServices ()</code>用于注册模块内服务，在官方示例中<code>registerServices ()</code>注册并定义了<code>view</code>服务以及模板的路径，并且注册了数据库连接服务<code>db</code>并设置数据库的连接信息。</p>
+<p>模块启动完成后触发 <code>application:afterStartModule</code>事件，进入分发阶段</p>
+<h3 id="分发阶段（Dispatch）"><a href="#分发阶段（Dispatch）" class="headerlink" title="分发阶段（Dispatch）"></a>分发阶段（Dispatch）</h3><p>分发过程由<code>Phalcon\Mvc\Dispatcher</code>（分发器）来完成，所谓分发，在Phalcon里本质上是分发器根据路由命中的结果，调用对应的Controller/Action，最终获得Action返回的结果。</p>
+<p>分发开始前首先会准备View，虽然View理论上位于MVC的最后一环，但是如果在分发过程中出现任何问题，通常都需要将问题显示出来，因此 View必须在这个环节就提前启动。Phalcon没有准备默认的View服务，需要从外部注入，在多模块demo中，View的注入官方推荐在模块启动 阶段完成的。如果是单模块应用，则可以在最开始的DI阶段注入。</p>
+<p>如果始终没有View注入，会抛出错误</p>
+<blockquote>
+<p>Service ‘view’ was not found in the dependency injection container</p>
+</blockquote>
+<p>导致分发过程直接中断。</p>
+<p>分发需要Dispatcher，Dispatcher同样从DI中取得。然后将router中得到的参数（NamespaceName / ModuleName / ControllerName / ActionName / Params），全部复制到Dispatcher中。</p>
+<p>分发开始前，会调用View的<code>start()</code>方法。具体可以参考<a href="http://docs.phalconphp.com/en/latest/reference/views.html#hierarchical-rendering" target="_blank" rel="noopener">View相关文档</a>，其实<code>Phalcon\Mvc\View-&gt;start()</code>就是PHP的输出缓冲函数<code>ob_start</code>的一个简单封装，分发过程中所有输出都会被暂存到缓冲区。</p>
+<p>分发开始前还会触发事件<code>application:beforeHandleRequest</code>。</p>
+<p>正式开始分发会调用<code>Phalcon\Mvc\Dispatcher-&gt;dispatch()</code>。</p>
+<h4 id="Dispatcher内的分发处理"><a href="#Dispatcher内的分发处理" class="headerlink" title="Dispatcher内的分发处理"></a>Dispatcher内的分发处理</h4><p>进入Dispatcher后会发现Dispatcher对整个分发过程进行了进一步细分，并且在分发的过程中会按顺序触发非常多的<a href="http://docs.phalconphp.com/en/latest/reference/dispatching.html#dispatch-loop-events" target="_blank" rel="noopener">分发事件</a>，可以通过这些分发事件进行更加细致的流程控制。部分事件提供了可中断的机制，只要返回<code>false</code>就可以跳过Dispatcher的分发过程。</p>
+<p>由于分发中可以使用<code>Phalcon\Mvc\Dispatcher-&gt;forward()</code>来实现Action的复用，因此分发在内部会通过循环实现，通过检测一个全局的<code>finished</code>标记来决定是否继续分发。当以下几种情况时，分发才会结束：</p>
+<ul>
+<li>Controller抛出异常</li>
+<li><code>forward</code>层数达到最大（256次）</li>
+<li>所有的Action调用完毕</li>
+</ul>
+<h3 id="渲染阶段-View-Render"><a href="#渲染阶段-View-Render" class="headerlink" title="渲染阶段 View Render"></a>渲染阶段 View Render</h3><p>分发结束后会触发<code>application:afterHandleRequest</code>，接下来通过<code>Phalcon\Mvc\Dispatcher-&gt;getReturnedValue()</code>取得分发过程返回的结果并进行处理。</p>
+<p>由于Action的逻辑在框架外，Action的返回值是无法预期的，因此这里根据返回值是否实现<code>Phalcon\Http\ResponseInterface</code>接口进行区分处理。</p>
+<h4 id="当Action返回一个非Phalcon-Http-ResponseInterface类型"><a href="#当Action返回一个非Phalcon-Http-ResponseInterface类型" class="headerlink" title="当Action返回一个非Phalcon\Http\ResponseInterface类型"></a>当Action返回一个非<code>Phalcon\Http\ResponseInterface</code>类型</h4><p>此时认为返回值无效，由View自己重新调度Render过程，会触发<code>application:viewRender</code>事件，同时从Dispatcher中取得ControllerName / ActionName / Params作为<code>Phalcon\Mvc\View-&gt;render()</code>的入口参数。</p>
+<p>Render完毕后调用<code>Phalcon\Mvc\View-&gt;finish()</code>结束缓冲区的接收。</p>
+<p>接下来从DI获得resonse服务，将<code>Phalcon\Mvc\View-&gt;getContent()</code>获得的内容置入response。</p>
+<h4 id="当Action返回一个Phalcon-Http-ResponseInterface类型"><a href="#当Action返回一个Phalcon-Http-ResponseInterface类型" class="headerlink" title="当Action返回一个Phalcon\Http\ResponseInterface类型"></a>当Action返回一个<code>Phalcon\Http\ResponseInterface</code>类型</h4><p>此时会将Action返回的Response作为最终的响应，不会重新构建新的Response。</p>
+<h3 id="返回响应"><a href="#返回响应" class="headerlink" title="返回响应"></a>返回响应</h3><p>通过前面的流程，无论中间经历了多少分支，最终都会汇总为唯一的响应。此时会触发<code>application:beforeSendResponse</code>，并调用</p>
+<ul>
+<li><code>Phalcon\Http\Response-&gt;sendHeaders()</code></li>
+<li><code>Phalcon\Http\Response-&gt;sendCookies()</code></li>
+</ul>
+<p>将http的头部信息先行发送。至此，<code>Application-&gt;handle()</code>对于请求的处理过程全部结束，对外返回一个<code>Phalcon\Http\Response</code>响应。</p>
+<h3 id="发送响应"><a href="#发送响应" class="headerlink" title="发送响应"></a>发送响应</h3><p>HTTP头部发送后一般把响应的内容也发送出去：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">echo $application-&gt;handle()-&gt;getContent();</span><br></pre></td></tr></table></figure>
+<p>这就是Phalcon Framework的完整MVC流程。</p>
+<h2 id="流程控制"><a href="#流程控制" class="headerlink" title="流程控制"></a>流程控制</h2><p>分析MVC的启动流程，无疑是希望对流程有更好的把握和控制，方法有两种：</p>
+<h3 id="自定义启动"><a href="#自定义启动" class="headerlink" title="自定义启动"></a>自定义启动</h3><p>按照上面的流程，我们其实完全可以自己实现<code>$application-&gt;handle()-&gt;getContent()</code>这一流程，下面就是一个简单的替代方案，代码中暂时没有考虑事件的触发。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">//Roter</span><br><span class="line">$router = $di[&apos;router&apos;];</span><br><span class="line">$router-&gt;handle();</span><br><span class="line"></span><br><span class="line">//Module handle</span><br><span class="line">$modules = $application-&gt;getModules();</span><br><span class="line">$routeModule = $router-&gt;getModuleName();</span><br><span class="line">if (isset($modules[$routeModule])) &#123;</span><br><span class="line">    $moduleClass = new $modules[$routeModule][&apos;className&apos;]();</span><br><span class="line">    $moduleClass-&gt;registerAutoloaders();</span><br><span class="line">    $moduleClass-&gt;registerServices($di);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">//dispatch</span><br><span class="line">$dispatcher = $di[&apos;dispatcher&apos;];</span><br><span class="line">$dispatcher-&gt;setModuleName($router-&gt;getModuleName());</span><br><span class="line">$dispatcher-&gt;setControllerName($router-&gt;getControllerName());</span><br><span class="line">$dispatcher-&gt;setActionName($router-&gt;getActionName());</span><br><span class="line">$dispatcher-&gt;setParams($router-&gt;getParams());</span><br><span class="line"></span><br><span class="line">//view</span><br><span class="line">$view = $di[&apos;view&apos;];</span><br><span class="line">$view-&gt;start();</span><br><span class="line">$controller = $dispatcher-&gt;dispatch();</span><br><span class="line">//Not able to call render in controller or else will repeat output</span><br><span class="line">$view-&gt;render(</span><br><span class="line">    $dispatcher-&gt;getControllerName(),</span><br><span class="line">    $dispatcher-&gt;getActionName(),</span><br><span class="line">    $dispatcher-&gt;getParams()</span><br><span class="line">);</span><br><span class="line">$view-&gt;finish();</span><br><span class="line"></span><br><span class="line">$response = $di[&apos;response&apos;];</span><br><span class="line">$response-&gt;setContent($view-&gt;getContent());</span><br><span class="line">$response-&gt;sendHeaders();</span><br><span class="line">echo $response-&gt;getContent();</span><br></pre></td></tr></table></figure>
+<h3 id="流程清单"><a href="#流程清单" class="headerlink" title="流程清单"></a>流程清单</h3><p>为了方便查找，将整个流程整理为一个树形清单如下：</p>
+<ul>
+<li><p>初始化DI (config/services.php) </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$di = new FactoryDefault();</span><br></pre></td></tr></table></figure>
+<ul>
+<li>设置路由 <code>$di[&#39;router&#39;] = function () {}</code></li>
+<li>设置URL <code>$di[&#39;url&#39;] = function () {}</code></li>
+<li>设置Session <code>$di[&#39;session&#39;] = function () {}</code></li>
+</ul>
+</li>
+<li><p>初始化Application (public/index.php)</p>
+<ul>
+<li>实例化App <code>$application = new Application();</code></li>
+<li>注入DI <code>$application-&gt;setDI($di);</code></li>
+<li>注册模块 (config/modules.php) <code>$application-&gt;registerModules()</code></li>
+</ul>
+</li>
+<li><p>启动Application (ext/mvc/application.c)</p>
+</li>
+</ul>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$application-&gt;handle()</span><br></pre></td></tr></table></figure>
+<ul>
+<li><p>检查DI</p>
+</li>
+<li><p>E 触发事件 <code>application:boot</code></p>
+</li>
+<li><p>路由启动 <code>$di[&#39;router&#39;]-&gt;handle()</code></p>
+</li>
+<li><p>获得模块名 <code>$moduleName = $di[&#39;router&#39;]-&gt;getModuleName()</code>，如果没有则从 <code>$application-&gt;getDefaultModule</code>获取</p>
+</li>
+<li><p>模块启动 (如果路由命中)</p>
+<ul>
+<li>E 触发事件 <code>application:beforeStartModule</code></li>
+<li>调用模块初始化方法 (Module.php) <code>registerAutoloaders()</code> 以及 <code>registerServices()</code></li>
+<li>E 触发事件 <code>application:afterStartModule</code></li>
+</ul>
+</li>
+<li><p>分发</p>
+<ul>
+<li><p>初始化View</p>
+</li>
+<li><p>初始化Dispatcher，将Router中的参数复制到Dispatcher</p>
+</li>
+<li><p>调用View <code>View-&gt;start()</code>开启缓冲区</p>
+</li>
+<li><p>E 触发事件 <code>application:beforeHandleRequest</code></p>
+</li>
+<li><p>开始分发 (etc/dispatcher.c)</p>
+</li>
+</ul>
+</li>
+</ul>
+<pre><code>  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Dispatcher-&gt;dispatch()</span><br></pre></td></tr></table></figure>
+
+  - E 触发事件 `dispatch:beforeDispatchLoop`
+  - 循环开始单次分发
+    - E 触发事件 `dispatch:beforeDispatch`
+    - 根据Dispatcher携带的Module、Namespace、Controller、Action获得完整的类与方法名，如果找不到则触发事件 E `dispatch:beforeException`
+    - E 触发事件 `dispatch:beforeExecuteRoute`
+    - 调用`Controller-&gt;beforeExecuteRoute()`
+    - 调用`Controller-&gt;initialize()`
+    - E 触发事件 `dispatch:afterInitialize`
+    - 调用Action方法
+    - E 触发事件 `dispatch:afterExecuteRoute`
+    - E 触发事件 `dispatch:afterDispatch`
+  - Action内如果有forward()，开始下一次分发
+
+- E 全部分发结束，触发事件 `dispatch:afterDispatchLoop`
+
+- Application获得分发后的输出 `$dispatcher-&gt;getReturnedValue()`
+
+- E 触发事件 `application:afterHandleRequest` 分发结束
+</code></pre><ul>
+<li><p>渲染，Appliction如果从分发拿到</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Phalcon\Http\ResponseInterface</span><br></pre></td></tr></table></figure>
+<p>类型的返回，则渲染直接结束</p>
+<ul>
+<li>E 触发事件 <code>application:viewRender</code> 分发结束</li>
+<li>调用 <code>Phalcon\Mvc\View-&gt;render()</code>，入口参数为Dispatcher的 ControllerName / ActionName / Params</li>
+<li>调用 <code>Phalcon\Mvc\View-&gt;finish()</code>结束缓冲区的接收</li>
+</ul>
+</li>
+<li><p>准备响应</p>
+<ul>
+<li>将<code>Phalcon\Mvc\View-&gt;getContent()</code>通过<code>Phalcon\Http\Response-&gt;setContent()</code>放入Response</li>
+<li>E 触发事件 <code>application:beforeSendResponse</code></li>
+<li>调用<code>Phalcon\Http\Response-&gt;sendHeaders()</code>发送头部</li>
+<li>调用<code>Phalcon\Http\Response-&gt;sendCookies()</code>发送Cookie</li>
+<li>将准备好的响应作为<code>$application-&gt;handle()</code>的返回值返回</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li><p>发送响应</p>
+<ul>
+<li><code>echo $application-&gt;handle()-&gt;getContent();</code></li>
+</ul>
+</li>
+</ul>
+<h3 id="MVC事件"><a href="#MVC事件" class="headerlink" title="MVC事件"></a>MVC事件</h3><p>Phalcon作为C扩展型的框架，其优势就在于高性能，虽然我们可以通过上一种方法自己实现整个启动，但更好的方式仍然是避免替换框架本身的内容，而使用事件驱动。</p>
+<p>下面梳理了整个MVC流程中所涉及的可被监听的事件，可以根据不同需求选择对应事件作为切入点：</p>
+<ul>
+<li>DI注入<ul>
+<li><code>application:boot</code> 应用启动</li>
+</ul>
+</li>
+<li>路由阶段<ul>
+<li>模块启动</li>
+<li><code>application:beforeStartModule</code> 模块启动前</li>
+<li><code>application:afterStartModule</code> 模块启动后</li>
+</ul>
+</li>
+<li>分发阶段<ul>
+<li><code>application:beforeHandleRequest</code>进入分发器前</li>
+<li>开始分发<ul>
+<li><code>dispatch:beforeDispatchLoop</code> 分发循环开始前</li>
+<li><code>dispatch:beforeDispatch</code> 单次分发开始前</li>
+<li><code>dispatch:beforeExecuteRoute</code> Action执行前</li>
+<li><code>dispatch:afterExecuteRoute</code> Action执行后</li>
+<li><code>dispatch:beforeNotFoundAction</code> 找不到Action</li>
+<li><code>dispatch:beforeException</code> 抛出异常前</li>
+<li><code>dispatch:afterDispatch</code> 单次分发结束</li>
+<li><code>dispatch:afterDispatchLoop</code> 分发循环结束</li>
+</ul>
+</li>
+<li><code>application:afterHandleRequest</code> 分发结束</li>
+</ul>
+</li>
+<li>渲染阶段<ul>
+<li><code>application:viewRender</code> 渲染开始前</li>
+</ul>
+</li>
+<li>发送响应<ul>
+<li><code>application:beforeSendResponse</code> 最终响应发送前</li>
+</ul>
+</li>
+</ul>
+<p>转自：<a href="https://www.cnblogs.com/zjl2015/p/5149272.html" target="_blank" rel="noopener">https://www.cnblogs.com/zjl2015/p/5149272.html</a></p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Phalcon/" rel="tag"># Phalcon</a>
+          
+            <a href="/tags/PHP/" rel="tag"># PHP</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/07/21/收获/" rel="next" title="收获">
+                <i class="fa fa-chevron-left"></i> 收获
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/07/26/Daily-records-during-my-summer-backend-internship/" rel="prev" title="Daily records during my summer backend internship">
+                Daily records during my summer backend internship <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+      </div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/uploads/myavatar.jpg" alt="Fuyao Wang">
+            
+              <p class="site-author-name" itemprop="name">Fuyao Wang</p>
+              <div class="site-description motion-element" itemprop="description">Welcome to my Blog</div>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">14</span>
+                    <span class="site-state-item-name">posts</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                      <a href="/categories/">
+                    
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">4</span>
+                    <span class="site-state-item-name">categories</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  
+                    
+                      <a href="/tags/">
+                    
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">13</span>
+                    <span class="site-state-item-name">tags</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://github.com/wfystx" title="GitHub &rarr; https://github.com/wfystx" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="mailto:fuyao@bu.edu" title="E-Mail &rarr; mailto:fuyao@bu.edu" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#创建项目"><span class="nav-number">1.</span> <span class="nav-text">创建项目</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#DI注册阶段"><span class="nav-number">2.</span> <span class="nav-text">DI注册阶段</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#模块注册阶段"><span class="nav-number">3.</span> <span class="nav-text">模块注册阶段</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MVC阶段"><span class="nav-number">4.</span> <span class="nav-text">MVC阶段</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#基础检查"><span class="nav-number">4.1.</span> <span class="nav-text">基础检查</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#路由阶段"><span class="nav-number">4.2.</span> <span class="nav-text">路由阶段</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#模块启动"><span class="nav-number">4.2.1.</span> <span class="nav-text">模块启动</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#分发阶段（Dispatch）"><span class="nav-number">4.3.</span> <span class="nav-text">分发阶段（Dispatch）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Dispatcher内的分发处理"><span class="nav-number">4.3.1.</span> <span class="nav-text">Dispatcher内的分发处理</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#渲染阶段-View-Render"><span class="nav-number">4.4.</span> <span class="nav-text">渲染阶段 View Render</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#当Action返回一个非Phalcon-Http-ResponseInterface类型"><span class="nav-number">4.4.1.</span> <span class="nav-text">当Action返回一个非Phalcon\Http\ResponseInterface类型</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#当Action返回一个Phalcon-Http-ResponseInterface类型"><span class="nav-number">4.4.2.</span> <span class="nav-text">当Action返回一个Phalcon\Http\ResponseInterface类型</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#返回响应"><span class="nav-number">4.5.</span> <span class="nav-text">返回响应</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#发送响应"><span class="nav-number">4.6.</span> <span class="nav-text">发送响应</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#流程控制"><span class="nav-number">5.</span> <span class="nav-text">流程控制</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#自定义启动"><span class="nav-number">5.1.</span> <span class="nav-text">自定义启动</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#流程清单"><span class="nav-number">5.2.</span> <span class="nav-text">流程清单</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MVC事件"><span class="nav-number">5.3.</span> <span class="nav-text">MVC事件</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Fuyao Wang</span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> v3.8.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v7.1.1</div>
+
+
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">Wordcount:9.4kwords</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/utils.js?v=7.1.1"></script>
+
+  <script src="/js/motion.js?v=7.1.1"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/affix.js?v=7.1.1"></script>
+
+  <script src="/js/schemes/pisces.js?v=7.1.1"></script>
+
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.1.1"></script>
+<script src="/js/post-details.js?v=7.1.1"></script>
+
+
+
+  
+
+
+  <script src="/js/next-boot.js?v=7.1.1"></script>
+
+
+  
+
+  
+
+  
+
+  
+  
+  <script id="dsq-count-scr" src="https://Freddie.disqus.com/count.js" async></script>
+
+
+<script>
+  var disqus_config = function() {
+    this.page.url = "http://yoursite.com/2019/07/23/Phalcon-Framework的MVC结构和启动流程/";
+    this.page.identifier = "2019/07/23/Phalcon-Framework的MVC结构和启动流程/";
+    this.page.title = 'Phalcon Framework的MVC结构和启动流程';
+    };
+  function loadComments() {
+    var d = document, s = d.createElement('script');
+    s.src = 'https://Freddie.disqus.com/embed.js';
+    s.setAttribute('data-timestamp', '' + +new Date());
+    (d.head || d.body).appendChild(s);
+  }
+  
+    loadComments();
+  
+</script>
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
