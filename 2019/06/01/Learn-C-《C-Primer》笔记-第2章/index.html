@@ -104,7 +104,7 @@
 <meta property="og:site_name" content="Fuyao&#39;s Blog">
 <meta property="og:description" content="2.1 基本内置类型  使用int执行整数运算。在实际应用中，short常常显得太小而long一般和int有一样的尺寸。如果你的数值超过了int的表示范围，选用long long。   2.2 变量  作为C++11新标准的一部分，用花括号来初始化变量得到了全面应用，这种初始化的形式被称为列表初始化(list initialization)。现在，无论是初始化对象还是某些时候为对象赋新值，都可以">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2019-07-26T08:09:54.243Z">
+<meta property="og:updated_time" content="2019-11-29T09:07:49.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Learn C++ -- 《C++ Primer》笔记 - 第2章 变量和基本类型">
 <meta name="twitter:description" content="2.1 基本内置类型  使用int执行整数运算。在实际应用中，short常常显得太小而long一般和int有一样的尺寸。如果你的数值超过了int的表示范围，选用long long。   2.2 变量  作为C++11新标准的一部分，用花括号来初始化变量得到了全面应用，这种初始化的形式被称为列表初始化(list initialization)。现在，无论是初始化对象还是某些时候为对象赋新值，都可以">
@@ -405,7 +405,7 @@
                 
                   <span class="post-meta-item-text">Edited on</span>
                 
-                <time title="Modified: 2019-07-26 16:09:54" itemprop="dateModified" datetime="2019-07-26T16:09:54+08:00">2019-07-26</time>
+                <time title="Modified: 2019-11-29 17:07:49" itemprop="dateModified" datetime="2019-11-29T17:07:49+08:00">2019-11-29</time>
               
             
           </span>
@@ -500,11 +500,18 @@
 </li>
 <li><p>2.3 复合类型(compound type)</p>
 <ul>
-<li><p>note: 引用并非对象，相反的，它只是为一个已经存在的对象所起的另外一个名字。</p>
+<li><p>引用: </p>
+<p><strong>因为无法令引用重新绑定到另外一个对象，因此引用必须初始化。</strong></p>
+<p><strong>引用并非对象，相反的，它只是为一个已经存在的对象所起的另外一个名字。</strong></p>
+<p>因为引用不是对象，没有实际地址，所以不能定义指向引用的指针。</p>
 </li>
-<li><p>因为引用不是对象，没有实际地址，所以不能定义指向引用的指针。</p>
-</li>
-<li><p>指针的类型要和它所指向的对象严格匹配：</p>
+<li><p>指针：</p>
+<p><strong>指针本身就是一个对象，允许队指针复制和拷贝。</strong></p>
+<p><strong>指针无须在定义时赋初值。</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">int ival = 42;</span><br><span class="line">int *p = &amp;ival;</span><br></pre></td></tr></table></figure>
+<p>指针存放某个对象的地址，要想获取该地址，需要使用取地址符(操作符&amp;)。</p>
+<p><strong>因为引用不是对象，没有实际地址，所以不能定义指向引用的指针。</strong></p>
+<p>指针的类型要和它所指向的对象严格匹配：</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">double</span> dval;</span><br><span class="line"><span class="keyword">double</span> *pd = &amp;dval; <span class="comment">// 正确：初始值是double型对象的地址</span></span><br><span class="line"><span class="keyword">double</span> *pd2 = pd; <span class="comment">// 正确：初始值是指向double对象的指针</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> *pi = pd; <span class="comment">//错误：指针pi的类型和pd的类型不匹配</span></span><br><span class="line">pi = &amp;dval; <span class="comment">//错误：试图把double型对象的地址赋给int型指针</span></span><br></pre></td></tr></table></figure>
 </li>
 <li><p>指针的初始化一般为直接指向某一个变量的地址或初始化为空指针(0，nullptr)。不能直接把变量的值赋给指针。</p>
@@ -572,7 +579,7 @@
 </li>
 <li><p>decltype类型指示符：编译器分析表达式并得到他的类型，却不实际计算表达式的值。</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">decltype</span>(f()) sum = x; <span class="comment">// sum的类型就是函数f的返回类型</span></span><br></pre></td></tr></table></figure>
-<p>如果decltype使用的表达是不是一个变量，则decltype返回表达式的结果对应的类型。</p>
+<p>如果decltype使用的表达式不是一个变量，则decltype返回表达式的结果对应的类型。</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// decltype的结果可以是引用类型</span></span><br><span class="line"><span class="keyword">int</span> i = <span class="number">42</span>, *p = &amp;i, &amp;r = i;</span><br><span class="line"><span class="keyword">decltype</span>(r + <span class="number">0</span>) b; <span class="comment">// 正确：加法的结果是int，因此b是一个(未初始化的)int</span></span><br><span class="line"><span class="keyword">decltype</span>(*p) c; <span class="comment">// 错误：c是int&amp;，必须初始化</span></span><br></pre></td></tr></table></figure>
 <p>因为r是一个应用，因此decltype(r)的结果是引用类型。若果想让结果类型是r所指的类型，可以把r作为表达式的一部分，如r+0。</p>
 <p>另一方面，如果表达式的内容是解引用操作，则decltype将得到引用类型。正如我们所熟悉的那样，解引用指针可以得到指针所指的对象，而且还能给这个对象赋值，因此，decltype(*p)的结果类型就是int&amp;，而非int。</p>
@@ -705,7 +712,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">18</span>
+                    <span class="site-state-item-count">27</span>
                     <span class="site-state-item-name">posts</span>
                   </a>
                 </div>
@@ -730,7 +737,9 @@
                     
                       
                     
-                    <span class="site-state-item-count">4</span>
+                      
+                    
+                    <span class="site-state-item-count">5</span>
                     <span class="site-state-item-name">categories</span>
                   </a>
                 </div>
@@ -775,7 +784,9 @@
                     
                       
                     
-                    <span class="site-state-item-count">14</span>
+                      
+                    
+                    <span class="site-state-item-count">15</span>
                     <span class="site-state-item-name">tags</span>
                   </a>
                 </div>
@@ -869,7 +880,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">Wordcount:10.8kwords</span>
+  <span class="post-count">Wordcount:13.7kwords</span>
 </div>
 
         

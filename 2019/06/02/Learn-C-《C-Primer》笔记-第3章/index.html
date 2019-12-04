@@ -104,7 +104,7 @@
 <meta property="og:site_name" content="Fuyao&#39;s Blog">
 <meta property="og:description" content="3.1 命名空间的using声明 例：如果想用cin cout endl 1using std::cin; using std::cout; using std::endl; 头文件不应包含using声明  3.2 标准库类型string 使用等号是拷贝初始化，不使用时直接初始化。 123string s5 = &quot;hiya&quot;; //拷贝初始化string s6(&quot;hiya&quot;); //直接初始化s">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2019-07-26T08:09:56.480Z">
+<meta property="og:updated_time" content="2019-11-30T12:45:26.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Learn C++ -- 《C++ Primer》笔记 - 第3章">
 <meta name="twitter:description" content="3.1 命名空间的using声明 例：如果想用cin cout endl 1using std::cin; using std::cout; using std::endl; 头文件不应包含using声明  3.2 标准库类型string 使用等号是拷贝初始化，不使用时直接初始化。 123string s5 = &quot;hiya&quot;; //拷贝初始化string s6(&quot;hiya&quot;); //直接初始化s">
@@ -405,7 +405,7 @@
                 
                   <span class="post-meta-item-text">Edited on</span>
                 
-                <time title="Modified: 2019-07-26 16:09:56" itemprop="dateModified" datetime="2019-07-26T16:09:56+08:00">2019-07-26</time>
+                <time title="Modified: 2019-11-30 20:45:26" itemprop="dateModified" datetime="2019-11-30T20:45:26+08:00">2019-11-30</time>
               
             
           </span>
@@ -486,13 +486,28 @@
 </li>
 <li><p>3.3 标准库类型vector</p>
 <p>要使用size_type，需首先指定它是由哪种类型定义的。</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;::size_type <span class="comment">//正确</span></span><br><span class="line"> <span class="built_in">vector</span>::size_type <span class="comment">//错误</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;::size_type <span class="comment">//正确</span></span><br><span class="line"><span class="built_in">vector</span>::size_type <span class="comment">//错误</span></span><br></pre></td></tr></table></figure>
 </li>
 </ul>
 <ul>
 <li><p>3.4 迭代器介绍</p>
 <p><strong><code>begin</code> 指向第一个元素，<code>end</code>指向最后一个元素的后一个元素，称为尾后迭代器(off-the-end iterator)</strong></p>
 <p>const_iterator迭代器只能读元素，不能写元素，如果是const对象的迭代器，应使用const_iterator。如果对象是常量，begin和end返回const_iterator。</p>
+</li>
+<li><p>3.5 数组</p>
+<ul>
+<li><p>字符数组的特殊性：字符数组有一种额外的初始化形式，可以用字符串字面值对此类型数组初始化，当使用这种方式时，要注意字符串字面值的结尾处还有一个空字符。</p>
+</li>
+<li><p>不允许拷贝和赋值：不能将数组的内容拷贝给其他数组作为其初始值，也不能用数组为其他数组赋值。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> a[] = &#123;<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>&#125;;</span><br><span class="line"><span class="keyword">int</span> a2[] = a; <span class="comment">//错误</span></span><br><span class="line">a2 = a;	<span class="comment">//错误</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>指针和数组</p>
+<p>通常使用取地址符来获取指向某个对象的指针，取地址符可以用于任何对象。数组的元素也是对象，对数组使用下标运算符得到该数组指定位置的元素。因此像其他对象一样，对数组的元素使用取地址符就能得到指向该元素的指针：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">string</span> nums[] = &#123;<span class="string">"one"</span>, <span class="string">"two"</span>, <span class="string">"three"</span>&#125;;</span><br><span class="line"><span class="built_in">string</span> *p = &amp;nums[<span class="number">0</span>]; <span class="comment">//p指向nums第一个元素</span></span><br></pre></td></tr></table></figure>
+<p>然而，数组还有一个特性，在很多用到数组名字的地方，编译器都会自动地将其替换为一个指向数组首元素的指针：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">string</span> *p2 = nums; <span class="comment">//等价于p2= &amp;nums[0]</span></span><br></pre></td></tr></table></figure>
+</li>
+</ul>
 </li>
 </ul>
 
@@ -612,7 +627,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">18</span>
+                    <span class="site-state-item-count">27</span>
                     <span class="site-state-item-name">posts</span>
                   </a>
                 </div>
@@ -637,7 +652,9 @@
                     
                       
                     
-                    <span class="site-state-item-count">4</span>
+                      
+                    
+                    <span class="site-state-item-count">5</span>
                     <span class="site-state-item-name">categories</span>
                   </a>
                 </div>
@@ -682,7 +699,9 @@
                     
                       
                     
-                    <span class="site-state-item-count">14</span>
+                      
+                    
+                    <span class="site-state-item-count">15</span>
                     <span class="site-state-item-name">tags</span>
                   </a>
                 </div>
@@ -776,7 +795,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">Wordcount:10.8kwords</span>
+  <span class="post-count">Wordcount:13.7kwords</span>
 </div>
 
         
